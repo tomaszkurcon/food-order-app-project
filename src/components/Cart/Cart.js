@@ -28,6 +28,32 @@ const Cart = (props) => {
       ))}
     </ul>
   );
+ 
+  const submitOrderedMeals = async () => {
+    try {
+      const orderedMealsList = cartCtx.items;
+      console.log(orderedMealsList)
+      const response = await fetch('https://react-http-36eb5-default-rtdb.firebaseio.com/orderedMeals.json', {
+        method: 'POST',
+        body: JSON.stringify(orderedMealsList),
+        headers: {
+          'Content-Type': 'application/json'
+        }   
+      });
+      if(!response.ok) {
+        throw new Error('We could not accept your order, please try again');
+      }
+      cartCtx.clearCart();
+      props.onOrder();
+      props.onHideCart();
+      
+    }
+    catch(err) {
+      props.onOrderError(err.message);
+      props.onHideCart();
+    }
+ 
+  }
 
   return (
     <Modal onClick={props.onHideCart}>
@@ -40,7 +66,7 @@ const Cart = (props) => {
         <button className={classes["button--alt"]} onClick={props.onHideCart}>
           Close
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
+        {hasItems && <button onClick={submitOrderedMeals} className={classes.button}>Order</button>}
       </div>
     </Modal>
   );
