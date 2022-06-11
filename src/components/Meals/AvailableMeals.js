@@ -38,7 +38,7 @@ const AvailableMeals = () => {
       try {
         const response = await fetch('https://react-http-36eb5-default-rtdb.firebaseio.com/meals.json');
         if(!response.ok) {
-          throw new Error('Something went wrong');
+          throw new Error('Something went wrong!');
         }
         const data = await response.json();
         const loadedMeals = [];
@@ -53,7 +53,6 @@ const AvailableMeals = () => {
         setAvailableMeals(loadedMeals);
         setIsLoading(false);
       } catch(error){
-        console.log(error.message);
         setError(error.message);
         setIsLoading(false);
       }
@@ -65,7 +64,20 @@ const AvailableMeals = () => {
     }, [loadAvailableMeals])
   
  
- 
+ if(isLoading) {
+  return (
+    <section className={classes.MealsLoading}>
+        <p>Loading...</p>
+    </section>
+  )
+ }
+ if(error) {
+  return (
+    <section className={classes.MealsError}>
+        <p>{error}</p>
+    </section>
+  )
+ }
   const mealsList = availableMeals.map((meal) => (
     <MealItem
       id={meal.id}
@@ -78,8 +90,6 @@ const AvailableMeals = () => {
   return (
     <section className={classes.meals}>
       <Card>
-        {isLoading && <p>Loading available meals</p>}
-        {error && <p>Something went wrong</p>}
         {!error && <ul>{mealsList}</ul>}
       </Card>
     </section>
